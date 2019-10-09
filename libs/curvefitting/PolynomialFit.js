@@ -18,7 +18,8 @@ class PolynomialFit {
     }
     
     fit() {
-        return new Polynomial(this.m, this.leastSquares.fit());
+        const {tvalues, result} = this.leastSquares.fit()
+        return { tvalues: tvalues, result: new Polynomial(this.m, result) };
     }
 }
 
