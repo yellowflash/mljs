@@ -1,37 +1,24 @@
-const {create, all} = require('mathjs');
-const math = create(all, {});
-
-class PolynomialCurve {
-    constructor(m, as) {
-        this.m = m;
-        this.as = as;
-    }
-
-    apply(x) {
-        return math.sum(
-                math.map(this.as, (a, [i]) => a * math.pow(x, i)));
-    }
-}
+const math = require('../math');
+const Polynomial = require('./Polynomial')
+const OrdinaryLeastSquares = require('./OrdinaryLeastSquares')
 
 class PolynomialFit {
-    constructor(m, Aij, Ti) {
+    constructor(m, leastSquares) {
         this.m = m;
-        this.Aij = Aij || math.zeros(m + 1, m + 1);
-        this.Ti = Ti || math.zeros(m + 1);
+        this.leastSquares = leastSquares || new OrdinaryLeastSquares(m);
     }
 
     add(x, y) {
         return new PolynomialFit(
-            this.m,
-            math.map(this.Aij, (a, [i, j]) => a + math.pow(x, i + j)),
-            math.map(this.Ti, (t, [i]) => t + math.pow(x, i) * y))
+            this.m, 
+            this.leastSquares.add(
+                math.map(
+                    math.range(1, this.m, true), 
+                    (k) => math.pow(x, k)), y));
     }
     
     fit() {
-        const solved = math.lusolve(this.Aij, this.Ti);
-        return new PolynomialCurve(this.m, math.map(
-            math.zeros(this.m + 1), 
-            (z, [i]) => math.row(solved, i)));
+        return new Polynomial(this.m, this.leastSquares.fit());
     }
 }
 

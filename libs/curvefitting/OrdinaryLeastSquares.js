@@ -1,6 +1,5 @@
-const HyperPlane = require('HyperPlane');
-const {create, all} = require('mathjs');
-const math = create(all, {});
+const HyperPlane = require('./HyperPlane');
+const math = require('../math');
 
 class OrdinaryLeastSquares {
     constructor(m, Aij, Ti) {
@@ -10,23 +9,17 @@ class OrdinaryLeastSquares {
     }
 
     add(xs, y) {
-        const xsz = math.concat([0], xs);
-
+        const xsz = math.concat([1], xs);
         return new OrdinaryLeastSquares(
             this.m,
-            math.map(this.Aij, (a, [k, j]) => a + x.column(j) * x.column(k)),
-            math.map(this.Ti, (t, k) => t + y * x.column(k))
+            math.map(this.Aij, (a, [k, j]) => a + xsz.get([j]) * xsz.get([k])),
+            math.map(this.Ti, (t, [k]) => t + y * xsz.get([k]))
         )
     }
 
     fit() {
         const solved = math.lusolve(this.Aij, this.Ti);
-        
-        // We should ideally return solved, but that's a single column matrix and 
-        // there is no direct way to convert to vector.
-        return new HyperPlane(math.map(
-            math.zeros(this.m + 1), 
-            (z, [i]) => math.row(solved, i)))
+        return new HyperPlane(this.m, math.flatten(solved));
     }
 }
 

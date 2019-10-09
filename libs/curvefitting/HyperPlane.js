@@ -1,5 +1,4 @@
-const {create, all} = require('mathjs');
-const math = create(all, {});
+const math = require('../math.js');
 
 class HyperPlane {
     constructor(dim, coeff) {
@@ -9,7 +8,7 @@ class HyperPlane {
 
     apply(vars) {
         return math.dot(
-            math.concat([0], vars),
+            math.concat([1], vars),
             this.coeff);
     }
 }
