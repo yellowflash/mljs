@@ -21,6 +21,17 @@ class PolynomialFit {
         const {tvalues, result} = this.leastSquares.fit()
         return { tvalues: tvalues, result: new Polynomial(this.m, result) };
     }
+
+    static create(m, xs, ys) {
+        const [n] = xs.size()
+        return new PolynomialFit(
+            m,
+            OrdinaryLeastSquares.create(
+                math.map(
+                    math.matrix(math.zeros([n, m])), 
+                    (x, [i, j]) => math.pow(xs.get([i]), j + 1)),
+                ys));
+    }
 }
 
 module.exports = PolynomialFit;
