@@ -40,8 +40,5 @@ describe('PolynomialFit', () => {
             poly(3) - 1])).fit();
 
         viacreate.result.apply(4).should.be.closeTo(viaadd.result.apply(4), 0.000001);
-        
-        for(i = 0; i <= 2; i ++) {
-            viacreate.tvalues.get([i]).should.equal(viaadd.tvalues.get([i]));
-        }
+        math.deepEqual(viacreate.tvalues, viaadd.tvalues).should.equal(true);
     })});
