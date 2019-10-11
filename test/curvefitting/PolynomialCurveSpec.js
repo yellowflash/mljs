@@ -32,12 +32,14 @@ describe('PolynomialFit', () => {
             .add(1, poly(1) - 0.5)
             .add(2, poly(2) + 1)
             .add(3, poly(3) - 1)
+            .add(4, poly(4) - 10)
             .fit();
         
-        const viacreate = PolynomialFit.create(2, math.matrix([1,2,3]), math.matrix([
+        const viacreate = PolynomialFit.create(2, math.matrix([1,2,3,4]), math.matrix([
             poly(1) - 0.5, 
             poly(2) + 1, 
-            poly(3) - 1])).fit();
+            poly(3) - 1,
+            poly(4) - 10])).fit();
 
         viacreate.result.apply(4).should.be.closeTo(viaadd.result.apply(4), 0.000001);
         math.deepEqual(viacreate.tvalues, viaadd.tvalues).should.equal(true);

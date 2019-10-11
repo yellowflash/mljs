@@ -18,27 +18,43 @@ math.lagmat = (lag, vector) => {
 }
 
 // Right now handling just the constant only case.
-math.mackinnonP = (stat) => {
-    if(stat >= 2.74) {
+math.mackinnonP = (x) => {
+    if(x >= 2.74) {
         return 1.0;
     }
-    if(stat <= -18.83) {
+    if(x <= -18.83) {
         return 0.0;
     }
-    const tauCoeff = stat <= -1.61 ? [2.1659, 1.4412, 3.8269 * 1e-2] : [1.7339, 9.3202, -1.2745, -1.0368];
-    return math.cumulativeProbability(math.sum(math.multiply(tauCoeff, stat)));
+    const tau = x <= -1.61 ? 2.1659 + 1.4412 * x + 3.8269 * 1e-2 * x * x  : 
+                             1.7339  + 9.3202 * x + -1.2745 * x * x + -1.0368 * x * x * x;
+    return math.cumulativeProbability(tau);
 }
 
-math.cumulativeProbability = (x, mean, sd) => {
-    const m = mean || 0;
-    const s = sd || 1;
-    const dev = x - mean;
-    if (math.abs(dev) > 40 * s) {
-        return dev < 0 ? 0.0 : 1.0;
-    } 
-    return 0.5 * math.erfc(-dev / (s * math.sqrt(2)));
+const sqrt1_2 = 1/math.sqrt(2);
+
+math.cumulativeProbability = (a) => {
+    const x = a * sqrt1_2;
+    const z = math.abs(x);
+
+    const y = z < sqrt1_2 ?  0.5 + 0.5 * math.erf(x): 0.5 * math.erfc(z);
+    return x <= 0 ? y : 1 - y;
 }
 
 math.erfc = (x) => 1 - math.erf(x)
+
+math.diffVector = (xs) => {
+    const [n] = xs.size();
+    const lagged = math.lagmat(2, xs);
+
+    return math.flatten(
+            math.subtract(
+                math.column(lagged, 1), 
+                math.column(lagged, 0)));
+}
+
+math.splice = (mat, s, e, includeEnd) => math.subset(
+    mat, 
+    math.index(
+        math.range(s, e, includeEnd || false)));
 
 module.exports = math;

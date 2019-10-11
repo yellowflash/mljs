@@ -21,9 +21,9 @@ class OrdinaryLeastSquares {
     }
 
     mse(ws) {
-        return this.yy - 
+        return (this.yy - 
                2 * math.sum(math.map(this.Ti, (a, [i]) => a * ws.get([i]))) +
-               math.sum(math.map(this.Aij, (a, [i, j]) => a * ws.get([i]) * ws.get([j])));
+               math.sum(math.map(this.Aij, (a, [i, j]) => a * ws.get([i]) * ws.get([j])))) / this.n;
     }
 
     fit() {
@@ -31,14 +31,14 @@ class OrdinaryLeastSquares {
         const solved = math.flatten(math.lusolve(this.Aij, this.Ti));
         const reducedChiSquare = ((this.n - this.m) / this.n) * this.mse(solved);
         const covariance = math.multiply(reducedChiSquare, math.inv(this.Aij));
-        const tvalues = math.map(math.diag(covariance), (a, [i]) => math.sqrt(math.abs(solved.get([i])/ a)));
+
+        const tvalues = math.map(math.diag(covariance), (a, [i]) => solved.get([i])/ math.sqrt(a));
         return {tvalues: tvalues, result: new HyperPlane(this.m, solved)};
     }
 
     static create(xss, ys) {
         const [n, m] = xss.size();
         const xssz = math.concat(math.ones([n, 1]), xss)
-
         return new OrdinaryLeastSquares(
             m,
             n,
