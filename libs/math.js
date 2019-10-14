@@ -30,13 +30,13 @@ math.mackinnonP = (x) => {
     return math.cumulativeProbability(tau);
 }
 
-const sqrt1_2 = 1/math.sqrt(2);
+math.SQRTEPS = 1.4901161194e-08;
 
 math.cumulativeProbability = (a) => {
-    const x = a * sqrt1_2;
+    const x = a * math.SQRT1_2;
     const z = math.abs(x);
 
-    const y = z < sqrt1_2 ?  0.5 + 0.5 * math.erf(x): 0.5 * math.erfc(z);
+    const y = z < math.SQRT1_2 ?  0.5 + 0.5 * math.erf(x): 0.5 * math.erfc(z);
     return x <= 0 ? y : 1 - y;
 }
 

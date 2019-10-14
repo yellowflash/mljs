@@ -17,23 +17,24 @@ class OrdinaryLeastSquares {
             this.n + 1,
             this.yy + y * y,
             math.map(this.Aij, (a, [k, j]) => a + xsz.get([j]) * xsz.get([k])),
-            math.map(this.Ti, (t, [k]) => t + y * xsz.get([k])));
+            math.add(math.multiply(y, xsz), this.Ti));
     }
 
     mse(ws) {
         return (this.yy - 
-               2 * math.sum(math.map(this.Ti, (a, [i]) => a * ws.get([i]))) +
+               2 * math.dot(this.Ti, ws) +
                math.sum(math.map(this.Aij, (a, [i, j]) => a * ws.get([i]) * ws.get([j])))) / this.n;
     }
 
     fit() {
         //TODO: Reverify if everything is correct here.
         const solved = math.flatten(math.lusolve(this.Aij, this.Ti));
-        const reducedChiSquare = ((this.n - this.m) / this.n) * this.mse(solved);
+        const reducedChiSquare = (this.n / (this.n - this.m)) * this.mse(solved);
         const covariance = math.multiply(reducedChiSquare, math.inv(this.Aij));
 
         const tvalues = math.map(math.diag(covariance), (a, [i]) => solved.get([i])/ math.sqrt(a));
-        return {tvalues: tvalues, result: new HyperPlane(this.m, solved)};
+        
+        return {tvalues: tvalues, rsquared: reducedChiSquare, result: new HyperPlane(this.m, solved)};
     }
 
     static create(xss, ys) {
