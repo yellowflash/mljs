@@ -16,7 +16,9 @@ describe("AugumentedDickeyFuller", () => {
 
 describe("CointegratedAugumentedDickeyFuller", () => {
     it("should say stationary series as stationary with high confidence", () => {
-        const pvalue = new CADF(math.matrix(testdata.stationary), math.matrix(testdata.stationary.map(i => math.random(-1, 1) + i)))
-                            .fit().pvalue;
-        pvalue.should.be.closeTo(0.03, 0.005);
+        const {pvalue, tvalue, lag} = new CADF(math.matrix(testdata.stationary), 
+                                               math.matrix(testdata.stationaryWithNoise))
+                                            .fit();
+        
+        pvalue.should.be.closeTo(0.06, 0.005);
     })});

@@ -8,7 +8,7 @@ class HyperPlane {
 
     apply(vars) {
         return math.multiply(
-            math.concat([1], vars),
+            math.concat(vars, [1]),
             this.coeff);
     }
 }

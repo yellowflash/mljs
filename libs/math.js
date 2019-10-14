@@ -17,19 +17,6 @@ math.lagmat = (lag, vector) => {
     return math.matrix(result);
 }
 
-// Right now handling just the constant only case.
-math.mackinnonP = (x) => {
-    if(x >= 2.74) {
-        return 1.0;
-    }
-    if(x <= -18.83) {
-        return 0.0;
-    }
-    const tau = x <= -1.61 ? 2.1659 + 1.4412 * x + 3.8269 * 1e-2 * x * x  : 
-                             1.7339  + 9.3202 * x + -1.2745 * x * x + -1.0368 * x * x * x;
-    return math.cumulativeProbability(tau);
-}
-
 math.SQRTEPS = 1.4901161194e-08;
 
 math.cumulativeProbability = (a) => {
