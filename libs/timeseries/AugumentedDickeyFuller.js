@@ -58,7 +58,6 @@ class AugumentedDickeyFuller {
     }
 
 
-    // Right now handling just the constant only case.
     static mackinnonP(x, hasC){
         const max = hasC ? 2.74 : 0.92; 
         const min = hasC ? -18.83 : -18.86;
